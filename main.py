@@ -121,7 +121,7 @@ while isStart:
                 el.x -= 10
                 if el.x < -100:
                    ammo_in_game_left.pop(i)
-
+        #бля
         #нажатие клавиш
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:

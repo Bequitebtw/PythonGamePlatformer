@@ -15,15 +15,17 @@ player_left = pygame.image.load("left.png").convert_alpha()
 enemy_right = pygame.image.load("enemy_right.png").convert_alpha()
 enemy_left = pygame.image.load("enemy_left.png").convert_alpha()
 pasxalka = pygame.image.load("meme.png").convert_alpha()
+ammo = pygame.image.load("ammo.png").convert_alpha()
 
 #переменные экрана,героя,врагов
 enemyXRight = 1250
 enemyYRight = 510
 enemyXLeft = -50
 enemyYLeft = 420
-
 playerX = 600
 playerY = 500
+ammoX = playerX
+ammoY = playerY
 bg_x = 0
 score = 0
 player_speed = 10
@@ -35,10 +37,13 @@ count_right = 2000
 last_player_direction = player_right
 enemy_in_game_right = []
 enemy_in_game_left = []
+ammo_in_game_right = []
+ammo_in_game_left = []
 enemy_timer_right = pygame.USEREVENT + 1
 enemy_timer_left = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer_right, count_right)
 pygame.time.set_timer(enemy_timer_left, count_left)
+
 
 scores = 1
 best_score = 0
@@ -58,10 +63,14 @@ close = label.render("EXIT",False,(255,255,200))
 close_lable_rect = close.get_rect(topleft=(510,350))
 isWon = False
 start = 0
+ammo_speed = 5
 
 isJumping = False
 isGameplay = False
 isStart = True
+
+
+
 while isStart:
 
 
@@ -100,6 +109,18 @@ while isStart:
                 if player_rect.colliderect(el):
                     start += 1
                     isGameplay = False
+        if ammo_in_game_right:
+            for (i,el) in enumerate(ammo_in_game_right):
+                screen.blit(ammo,(el))
+                el.x += 10
+                if el.x >= 1250:
+                   ammo_in_game_right.pop(i)
+        if ammo_in_game_left:
+            for (i,el) in enumerate(ammo_in_game_left):
+                screen.blit(ammo,(el))
+                el.x -= 10
+                if el.x < -100:
+                   ammo_in_game_left.pop(i)
 
         #нажатие клавиш
         keys = pygame.key.get_pressed()
@@ -116,6 +137,10 @@ while isStart:
             start += 1
         if keys[pygame.K_LEFT]:
             playerX -= player_speed + 2
+        if keys[pygame.K_c] and last_player_direction == player_right:
+            ammo_in_game_right.append(ammo.get_rect(topleft=(playerX, playerY)))
+        if keys[pygame.K_c] and last_player_direction == player_left:
+            ammo_in_game_left.append(ammo.get_rect(topleft=(playerX, playerY)))
         elif keys[pygame.K_RIGHT]:
             playerX += player_speed
 
@@ -136,6 +161,7 @@ while isStart:
                 player_speed = 10
 
         #движение игрока и фона
+        ammoX += 5
         bg_x -= 2
         playerX -= 2
         if bg_x == -1200:

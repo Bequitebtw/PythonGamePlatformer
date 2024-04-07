@@ -30,10 +30,8 @@ bg_x = 0
 score = 0
 player_speed = 10
 jump_count = 12
-
-count_left = 2500
-count_right = 2000
-
+count_left = 2000
+count_right = 10
 last_player_direction = player_right
 enemy_in_game_right = []
 enemy_in_game_left = []
@@ -115,13 +113,29 @@ while isStart:
                 el.x += 10
                 if el.x >= 1250:
                    ammo_in_game_right.pop(i)
+                if enemy_in_game_right:
+                    for (index,enemy) in enumerate(enemy_in_game_right):
+                        if el.colliderect(enemy):
+                            enemy_in_game_right.pop(index)
+                            ammo_in_game_right.pop(i)
+
         if ammo_in_game_left:
             for (i,el) in enumerate(ammo_in_game_left):
                 screen.blit(ammo,(el))
                 el.x -= 10
                 if el.x < -100:
                    ammo_in_game_left.pop(i)
-        #бля
+                if enemy_in_game_left:
+                    for (index,enemy) in enumerate(enemy_in_game_left):
+                        if el.colliderect(enemy):
+                            enemy_in_game_left.pop(index)
+                            ammo_in_game_left.pop(i)
+                if enemy_in_game_right:
+                    for (index,enemy) in enumerate(enemy_in_game_right):
+                        if el.colliderect(enemy):
+                            enemy_in_game_right.pop(index)
+                            ammo_in_game_left.pop(i)
+
         #нажатие клавиш
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -137,10 +151,6 @@ while isStart:
             start += 1
         if keys[pygame.K_LEFT]:
             playerX -= player_speed + 2
-        if keys[pygame.K_c] and last_player_direction == player_right:
-            ammo_in_game_right.append(ammo.get_rect(topleft=(playerX, playerY)))
-        if keys[pygame.K_c] and last_player_direction == player_left:
-            ammo_in_game_left.append(ammo.get_rect(topleft=(playerX, playerY)))
         elif keys[pygame.K_RIGHT]:
             playerX += player_speed
 
@@ -189,6 +199,8 @@ while isStart:
             jump_count = 12
             enemy_in_game_right.clear()
             enemy_in_game_left.clear()
+            ammo_in_game_left.clear()
+            ammo_in_game_right.clear()
         if isWon:
             screen.blit(pasxalka, (0, 0))
             screen.blit(pasxalka, (700, 0))
@@ -208,7 +220,12 @@ while isStart:
             isStart = False
             pygame.quit()
         if event.type == enemy_timer_right:
-            enemy_in_game_right.append(enemy_left.get_rect(topleft=(enemyXRight, enemyYRight)))
+            enemy_in_game_right.append(enemy_right.get_rect(topleft=(enemyXRight, enemyYRight)))
         if event.type == enemy_timer_left:
-            enemy_in_game_left.append(enemy_right.get_rect(topleft=(enemyXLeft, enemyYLeft)))
+            enemy_in_game_left.append(enemy_left.get_rect(topleft=(enemyXLeft, enemyYLeft)))
+        if isGameplay and event.type == pygame.KEYUP and event.key == pygame.K_c and last_player_direction == player_right:
+            ammo_in_game_right.append(ammo.get_rect(topleft=(playerX, playerY)))
+        if isGameplay and event.type == pygame.KEYUP and event.key == pygame.K_c and last_player_direction == player_left:
+            ammo_in_game_left.append(ammo.get_rect(topleft=(playerX, playerY)))
+
     clock.tick(60)

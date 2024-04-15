@@ -238,7 +238,6 @@ while isStart:
             isStart = False
 
     pygame.display.update()
-    #
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isStart = False

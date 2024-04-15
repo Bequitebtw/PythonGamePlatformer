@@ -38,12 +38,12 @@ enemy_in_game_right = []
 enemy_in_game_left = []
 ammo_in_game_right = []
 ammo_in_game_left = []
-enemy_timer_right = pygame.USEREVENT + 2
-enemy_timer_left = pygame.USEREVENT + 2
+enemy_timer_right = pygame.USEREVENT + 3
+enemy_timer_left = pygame.USEREVENT + 3
 ammo_reboot_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer_right, 1200)
-pygame.time.set_timer(enemy_timer_left, 1500)
-pygame.time.set_timer(ammo_reboot_timer, 7000)
+pygame.time.set_timer(enemy_timer_left, 3000)
+pygame.time.set_timer(ammo_reboot_timer, 5500)
 
 
 scores = 1
@@ -91,11 +91,9 @@ while isStart:
             count_left -= 500
         scores += 1
         score_count = label.render("Score: " + str(scores), False, (117, 168, 240))
-        ammo_count = label.render("Ammo: " + str(ammo_ready), False, (117, 168, 240))
-        max_ammo = label.render("Max: " + str(ammo_max), False, (117, 15, 15))
-        screen.blit(ammo_count, (250, 50))
+        ammo_count = label.render("Ammo: " + str(ammo_ready) + "/" + str(ammo_max), False, (117, 15, 15))
+        screen.blit(ammo_count, (50, 50))
         screen.blit(score_count, (500,50))
-        screen.blit(max_ammo,(50,50))
         #enemies
         if enemy_in_game_right:
             for (i,el) in enumerate(enemy_in_game_right):
@@ -146,10 +144,10 @@ while isStart:
 
         #нажатие клавиш
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             screen.blit(last_player_direction, (playerX, playerY))
             last_player_direction = player_left
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_d]:
             screen.blit(last_player_direction, (playerX, playerY))
             last_player_direction = player_right
         else:
@@ -157,13 +155,13 @@ while isStart:
         if playerX <= 0 or playerX >= 1100:
             isGameplay = False
             start += 1
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             playerX -= player_speed + 2
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_d]:
             playerX += player_speed
-        if keys[pygame.K_x] and playerY < 520:
-            playerY += 40
-
+        if keys[pygame.K_s] and not isJumping:
+            if playerY <= 500:
+                playerY = 540
 
 
         #прыжок
@@ -171,6 +169,8 @@ while isStart:
             if keys[pygame.K_SPACE]:
                 playerY = 500
                 isJumping = True
+        elif playerY == 540:
+            playerY = 500
         else:
             if jump_count >= -12:
                 if jump_count > 0:
@@ -182,6 +182,7 @@ while isStart:
                 isJumping = False
                 jump_count = 12
                 player_speed = 10
+                playerY = 500
 
         #движение игрока и фона
         ammoX += 5
@@ -219,6 +220,7 @@ while isStart:
             playerY = 500
             isJumping = False
             jump_count = 12
+            ammo_ready = 5
             enemy_in_game_right.clear()
             enemy_in_game_left.clear()
             ammo_in_game_left.clear()
@@ -245,10 +247,10 @@ while isStart:
             enemy_in_game_right.append(enemy_right.get_rect(topleft=(enemyXRight, enemyYRight)))
         if event.type == enemy_timer_left:
             enemy_in_game_left.append(enemy_left.get_rect(topleft=(enemyXLeft, enemyYLeft)))
-        if isGameplay and event.type == pygame.KEYUP and event.key == pygame.K_c and last_player_direction == player_right and ammo_ready:
+        if isGameplay and event.type == pygame.KEYUP and event.key == pygame.K_w and last_player_direction == player_right and ammo_ready:
             ammo_in_game_right.append(ammo.get_rect(topleft=(playerX + 20, playerY + 30)))
             ammo_ready -= 1
-        if isGameplay and event.type == pygame.KEYUP and event.key == pygame.K_c and last_player_direction == player_left and ammo_ready:
+        if isGameplay and event.type == pygame.KEYUP and event.key == pygame.K_w and last_player_direction == player_left and ammo_ready:
             ammo_in_game_left.append(ammo.get_rect(topleft=(playerX, playerY + 30)))
             ammo_ready -= 1
         if event.type == ammo_reboot_timer and ammo_ready < ammo_max:

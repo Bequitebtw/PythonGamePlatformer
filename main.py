@@ -38,11 +38,11 @@ enemy_in_game_right = []
 enemy_in_game_left = []
 ammo_in_game_right = []
 ammo_in_game_left = []
-enemy_timer_right = pygame.USEREVENT + 3
-enemy_timer_left = pygame.USEREVENT + 3
+enemy_timer_right = pygame.USEREVENT + 2
+enemy_timer_left = pygame.USEREVENT + 2
 ammo_reboot_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer_right, 1200)
-pygame.time.set_timer(enemy_timer_left, 3000)
+pygame.time.set_timer(enemy_timer_left, 2000)
 pygame.time.set_timer(ammo_reboot_timer, 5500)
 
 
@@ -65,7 +65,7 @@ close_lable_rect = close.get_rect(topleft=(510,350))
 isWon = False
 start = 0
 ammo_speed = 5
-ammo_ready = 5
+ammo_ready = 2
 ammo_max = 5
 isJumping = False
 isGameplay = False
@@ -107,7 +107,7 @@ while isStart:
         if enemy_in_game_left:
             for (i,el) in enumerate(enemy_in_game_left):
                 screen.blit(enemy_left, (el))
-                el.x += 5 + (scores / 300)
+                el.x += 5 + (scores / 500)
                 if el.x >= 1250:
                     enemy_in_game_left.pop(i)
                 if player_rect.colliderect(el):
@@ -163,6 +163,22 @@ while isStart:
             if playerY <= 500:
                 playerY = 540
 
+        #сложность
+        if scores > 1500:
+            enemyYLeft = 510
+            enemyYRight = 440
+        if scores > 2000:
+            enemyYLeft = 440
+            enemyYRight = 510
+        if scores > 2200:
+            enemyYLeft = 510
+            enemyYRight = 440
+        if scores > 3000:
+            enemyYLeft = 440
+            enemyYRight = 510
+        if scores > 3500:
+            enemyYLeft = 510
+            enemyYRight = 440
 
         #прыжок
         if not isJumping:
@@ -203,10 +219,10 @@ while isStart:
         if start == 0 and not isWon:
 
             screen.blit(start_lable,start_lable_rect)
-        rules_label_1 = label.render("Walk: arrows", False, (222, 195, 44))
+        rules_label_1 = label.render("Walk: a,d", False, (222, 195, 44))
         rules_label_2 = label.render("Jump: space", False, (222, 195, 44))
-        rules_label_3 = label.render("Crouch: x", False, (222, 195, 44))
-        rules_label_4 = label.render("Shoot: c", False, (222, 195, 44))
+        rules_label_3 = label.render("Crouch: s", False, (222, 195, 44))
+        rules_label_4 = label.render("Shoot: w", False, (222, 195, 44))
         screen.blit(rules_label_1, (100, 500))
         screen.blit(rules_label_2, (800, 500))
         screen.blit(rules_label_3, (100, 600))
@@ -220,7 +236,9 @@ while isStart:
             playerY = 500
             isJumping = False
             jump_count = 12
-            ammo_ready = 5
+            ammo_ready = 2
+            enemyYLeft = 440
+            enemyYRight = 510
             enemy_in_game_right.clear()
             enemy_in_game_left.clear()
             ammo_in_game_left.clear()
@@ -244,7 +262,7 @@ while isStart:
             pygame.quit()
         if event.type == enemy_timer_right:
             enemy_in_game_right.append(enemy_right.get_rect(topleft=(enemyXRight, enemyYRight)))
-        if event.type == enemy_timer_left:
+        if event.type == enemy_timer_left and scores > 1000:
             enemy_in_game_left.append(enemy_left.get_rect(topleft=(enemyXLeft, enemyYLeft)))
         if isGameplay and event.type == pygame.KEYUP and event.key == pygame.K_w and last_player_direction == player_right and ammo_ready:
             ammo_in_game_right.append(ammo.get_rect(topleft=(playerX + 20, playerY + 30)))
